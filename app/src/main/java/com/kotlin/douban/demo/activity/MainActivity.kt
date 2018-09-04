@@ -3,10 +3,13 @@ package com.kotlin.douban.demo.activity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.MenuItem
 import com.kotlin.douban.demo.R
+import com.kotlin.douban.demo.fragment.MainContentFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -39,6 +42,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        //进入到主Frament界面
+        val fragmentMainContent = MainContentFragment()
+        val fm:FragmentManager = supportFragmentManager
+        val ft: FragmentTransaction = fm.beginTransaction()
+        ft.replace(R.id.fl_main_content, fragmentMainContent)
+        ft.commit()
     }
 
     override fun onBackPressed() {
