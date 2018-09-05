@@ -6,6 +6,9 @@ import com.kotlin.douban.demo.api.ApiService
 import com.kotlin.douban.demo.bean.Movie
 import com.kotlin.douban.demo.bean.MoviesBean
 import com.kotlin.douban.demo.common.ContactCommon
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import okhttp3.OkHttpClient
 import org.reactivestreams.Subscriber
@@ -14,7 +17,11 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import rx.schedulers.Schedulers
+import java.util.*
 import java.util.concurrent.TimeUnit
+import io.reactivex.disposables.Disposable
+
+
 
 
 class IsPLayingMovieFragment:BaseFragment() {
@@ -39,6 +46,21 @@ class IsPLayingMovieFragment:BaseFragment() {
                 .connectTimeout(12, TimeUnit.MINUTES)
                 .build()
 
+        val observerTest = object : Observer<MoviesBean> {
+            override fun onNext(p0: MoviesBean) {
+            }
+
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(p0: Disposable) {
+            }
+
+            override fun onError(p0: Throwable) {
+            }
+
+        }
+
         val retrofit: Retrofit = Retrofit.Builder()
                 .baseUrl(ContactCommon.douBanUrl)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -48,20 +70,8 @@ class IsPLayingMovieFragment:BaseFragment() {
         val service:ApiService = retrofit.create(ApiService::class.java)
         val observer = service.getIsPlayingMovie(0, 20)
         observer.observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(object :Subscriber<MoviesBean>{
-                    override fun onComplete() {
-                    }
-
-                    override fun onSubscribe(s: Subscription?) {
-                    }
-
-                    override fun onError(t: Throwable?) {
-                    }
-
-                    override fun onNext(t: MoviesBean?) {
-                    }
-                })
+                .subscribeOn(Schedulers.newThread() as Scheduler)
+                .subscribe(observerTest)
 
 //        mAdapter = IsPlayingMovieAdapter(context, mListData)
 //        mAdapter.let {
