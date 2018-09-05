@@ -25,8 +25,8 @@ abstract class BaseFragment: Fragment() {
     }
 
     abstract fun getLayoutResId():Int
-    abstract fun initData()
     abstract fun initView()
+    abstract fun initData()
 
     open fun getBaseView():View {
         return mView

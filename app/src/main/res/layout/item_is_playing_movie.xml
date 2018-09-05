@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00FEFEFE"
+    android:focusable="false"
+    android:paddingTop="5dp"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp" >
+
+    <include
+        android:id="@+id/include_card_view"
+        layout="@layout/item_card_view" />
+
+</android.support.constraint.ConstraintLayout>

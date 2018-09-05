@@ -7,13 +7,9 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:listSelector="@android:color/transparent"
+        android:divider="@android:color/transparent"
         android:id="@+id/lv">
     </ListView>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="lv"
-        tools:ignore="HardcodedText" />
 </android.support.constraint.ConstraintLayout>
