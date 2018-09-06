@@ -154,25 +154,25 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
                 .subscribe(observerMovieBean)
     }
 
-    private fun getLatestData() {
-        val client =  OkHttpClient()
-                .newBuilder().readTimeout(60, TimeUnit.MINUTES)
-                .connectTimeout(12, TimeUnit.MINUTES)
-                .build()
-
-        val retrofit: Retrofit = Retrofit.Builder()
-                .baseUrl(ContactCommon.douBanUrl)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(client)
-                .build()
-        val service:ApiService = retrofit.create(ApiService::class.java)
-        val observer = service.getIsPlayingMovie(0, 20)
-        observer.observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(observerMovieBean)
-    }
+//    private fun getLatestData() {
+//        val client =  OkHttpClient()
+//                .newBuilder().readTimeout(60, TimeUnit.MINUTES)
+//                .connectTimeout(12, TimeUnit.MINUTES)
+//                .build()
+//
+//        val retrofit: Retrofit = Retrofit.Builder()
+//                .baseUrl(ContactCommon.douBanUrl)
+//                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+//                .client(client)
+//                .build()
+//        val service:ApiService = retrofit.create(ApiService::class.java)
+//        val observer = service.getIsPlayingMovie(0, 20)
+//        observer.observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.newThread())
+//                .subscribe(observerMovieBean)
+//    }
 
     override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
         LogUtils.d("zly --> firstVisibleItem:$p1 visibleItemCount:$p2 totalItemCount:$p3")
@@ -182,7 +182,7 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
             var currentpage = if (loadtotal%20 == 0) loadtotal/20 else loadtotal/20+1
             var nextPage = currentpage + 1
             if (nextPage < 5) {
-                getLatestData
+//                getLatestData
             } else {
                 mLv.addFooterView(footerView)
             }
