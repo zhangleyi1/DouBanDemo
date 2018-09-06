@@ -34,8 +34,6 @@ import retrofit2.adapter.rxjava.HttpException
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.net.ConnectException
 import java.net.SocketTimeoutException
-import java.util.zip.Inflater
-
 
 class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
     private lateinit var mLv:ListView
@@ -43,6 +41,7 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
     private lateinit var mListData: ArrayList<Movie>
     private lateinit var mSwipRefreshLayout: SwipeRefreshLayout
     private lateinit var footerView: View
+
     override fun getLayoutResId(): Int {
         return R.layout.fragment_movie
     }
@@ -71,7 +70,7 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
             mLv.adapter = it as IsPlayingMovieAdapter
         }
 
-        getLatestData()
+        getNetData(0, 20)
     }
 
     var handlerWork:Handler = Handler()
@@ -83,7 +82,7 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
                 handlerWork.post(Runnable {
                     kotlin.run {
                         LogUtils.d("zly -->handlerWork run.")
-                        getLatestData()
+                        getNetData(0, 20)
                     }
                 })
                 true
@@ -94,7 +93,7 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
         }
     }
 
-    val observerMovieBean = object : Observer<MoviesBean> {
+    private val observerMovieBean = object : Observer<MoviesBean> {
         override fun onNext(p0: MoviesBean) {
             LogUtils.d("zly -->Observer onNext.")
             LogUtils.d("zly --> start:" + p0.start + " count" + p0.count)
@@ -109,7 +108,7 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
             LogUtils.d("zly -->Observer onComplete.")
             mSwipRefreshLayout.isRefreshing = false
             footerView = layoutInflater.inflate(R.layout.lv_footer,null)
-            mLv.addFooterView(footerView)
+//            mLv.addFooterView(footerView)
         }
 
         override fun onSubscribe(p0: Disposable) {
@@ -131,10 +130,16 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
             } else {
                 LogUtils.d("zly --> 发生未知错误:" + p0.message)
             }
+            var i = 0
+            while (i++<100) {
+                var movie = Movie("1", 9.0, "11", "111")
+                mListData.add(movie)
+            }
+            (mAdapter as IsPlayingMovieAdapter).notifyDataSetChanged()
         }
     }
 
-    private fun getLatestData() {
+ /*   private fun getLatestData() {
         val client =  OkHttpClient()
                 .newBuilder().readTimeout(60, TimeUnit.MINUTES)
                 .connectTimeout(12, TimeUnit.MINUTES)
@@ -152,28 +157,33 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
         observer.observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(observerMovieBean)
+    }*/
+
+    private fun getNetData(start:Int, count:Int) {
+        if (start == 0) {
+            mListData.clear()
+        }
+
+        val client =  OkHttpClient()
+                .newBuilder().readTimeout(60, TimeUnit.MINUTES)
+                .connectTimeout(12, TimeUnit.MINUTES)
+                .build()
+
+        val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(ContactCommon.douBanUrl)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(client)
+                .build()
+        val service:ApiService = retrofit.create(ApiService::class.java)
+        val observer = service.getIsPlayingMovie(start, count)
+        observer.observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(observerMovieBean)
     }
 
-//    private fun getLatestData() {
-//        val client =  OkHttpClient()
-//                .newBuilder().readTimeout(60, TimeUnit.MINUTES)
-//                .connectTimeout(12, TimeUnit.MINUTES)
-//                .build()
-//
-//        val retrofit: Retrofit = Retrofit.Builder()
-//                .baseUrl(ContactCommon.douBanUrl)
-//                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-//                .client(client)
-//                .build()
-//        val service:ApiService = retrofit.create(ApiService::class.java)
-//        val observer = service.getIsPlayingMovie(0, 20)
-//        observer.observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.newThread())
-//                .subscribe(observerMovieBean)
-//    }
-
+    private var hasFooterView: Boolean = false
     override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
         LogUtils.d("zly --> firstVisibleItem:$p1 visibleItemCount:$p2 totalItemCount:$p3")
         var loadtotal = p3
@@ -181,15 +191,23 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
         if ((lastItemid+1) == loadtotal && loadtotal > 0) {
             var currentpage = if (loadtotal%20 == 0) loadtotal/20 else loadtotal/20+1
             var nextPage = currentpage + 1
+            LogUtils.d("zly --> onScroll currentpage:$currentpage nextPage:$nextPage")
             if (nextPage < 5) {
-//                getLatestData
-            } else {
-                mLv.addFooterView(footerView)
+                getNetData(currentpage * 20, 20)
+//                if (hasFooterView) {
+//                    mLv.removeFooterView(footerView)
+//                    hasFooterView = false
+//                }
             }
+//             else if (!hasFooterView) {
+//                hasFooterView = true
+//                mLv.addFooterView(footerView)
+//            }
         }
     }
 
     override fun onScrollStateChanged(p0: AbsListView?, p1: Int) {
+        LogUtils.d("zly --> onScrollStateChanged:$p1")
         val position = p0!!.lastVisiblePosition
         if ((p1 == SCROLL_STATE_IDLE) && (position == (p0.count-1))) {
         }

@@ -41,7 +41,7 @@ class IsPlayingMovieAdapter():BaseAdapter() {
         LogUtils.d("zly --> IsPlayingMovieAdapter getView p1:" + (null == p1))
         if (null == p1) {
             holder = ViewHolder()
-            view = mInflater.inflate(R.layout.item_is_playing_movie, p2, false)
+            view = mInflater.inflate(R.layout./*item_card_view*/item_is_playing_movie, p2, false)
             holder.iv = view.findViewById(R.id.iv_movie_icon) as ImageView
             holder.grade = view.findViewById(R.id.tv_movie_grade) as TextView
             holder.name = view.findViewById(R.id.tv_movie_name) as TextView
@@ -52,7 +52,7 @@ class IsPlayingMovieAdapter():BaseAdapter() {
             view = p1
         }
 
-        Glide.with(mContext).load(mList.get(p0).iconUrl).into(holder.iv)
+//        Glide.with(mContext).load(mList.get(p0).iconUrl).into(holder.iv)
 
         holder.grade.text = mList.get(p0).grade.toString()
         holder.name.text = mList.get(p0).name
