@@ -16,7 +16,7 @@ class MoviesBean() {
         var collect_count:Int = 0
         lateinit var original_title:String
         lateinit var subtype:String
-        lateinit var directors:DirectorsBean
+        lateinit var directors:List<DirectorsBean>
         lateinit var year:String
         lateinit var images:ImagesBean
         lateinit var alt:String

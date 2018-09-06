@@ -9,9 +9,12 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.kotlin.douban.demo.R
+import com.kotlin.douban.demo.R.id.imageView
 import com.kotlin.douban.demo.Utils.LogUtils
 import com.kotlin.douban.demo.bean.Movie
+import org.w3c.dom.Text
 
 @Suppress("CAST_NEVER_SUCCEEDS")
 class IsPlayingMovieAdapter():BaseAdapter() {
@@ -42,14 +45,18 @@ class IsPlayingMovieAdapter():BaseAdapter() {
             holder.iv = view.findViewById(R.id.iv_movie_icon) as ImageView
             holder.grade = view.findViewById(R.id.tv_movie_grade) as TextView
             holder.name = view.findViewById(R.id.tv_movie_name) as TextView
+            holder.type = view.findViewById(R.id.tv_movie_type) as TextView
             view.tag = holder
         } else {
             holder = p1.tag as ViewHolder
             view = p1
         }
 
-        holder.grade.text = "9.0"
-        holder.name.text = "Test"
+        Glide.with(mContext).load(mList.get(p0).iconUrl).into(holder.iv)
+
+        holder.grade.text = mList.get(p0).grade.toString()
+        holder.name.text = mList.get(p0).name
+        holder.type.text = mList.get(p0).type
         return view
     }
 
@@ -69,5 +76,6 @@ class IsPlayingMovieAdapter():BaseAdapter() {
         lateinit var iv:ImageView
         lateinit var grade: TextView
         lateinit var name: TextView
+        lateinit var type: TextView
     }
 }
