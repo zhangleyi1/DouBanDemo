@@ -5,10 +5,11 @@ import android.graphics.Color
 import android.os.Handler
 import android.os.Message
 import android.support.v4.widget.SwipeRefreshLayout
-import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.AbsListView
 import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+import android.widget.Adapter
+import android.widget.ListView
 import com.kotlin.douban.demo.R
 import com.kotlin.douban.demo.Utils.LogUtils
 import com.kotlin.douban.demo.adapter.IsPlayingMovieAdapter
@@ -16,24 +17,19 @@ import com.kotlin.douban.demo.api.ApiService
 import com.kotlin.douban.demo.bean.Movie
 import com.kotlin.douban.demo.bean.MoviesBean
 import com.kotlin.douban.demo.common.ContactCommon
-import io.reactivex.Observable
 import io.reactivex.Observer
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
-import okhttp3.OkHttpClient
-import org.reactivestreams.Subscriber
-import org.reactivestreams.Subscription
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.*
-import java.util.concurrent.TimeUnit
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import retrofit2.adapter.rxjava.HttpException
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.HttpException
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import java.net.ConnectException
 import java.net.SocketTimeoutException
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
     private lateinit var mLv:ListView
@@ -50,7 +46,6 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
     override fun initView() {
         mLv = getBaseView().findViewById(R.id.lv) as ListView
         mLv.setOnScrollListener(this)
-
 
         mSwipRefreshLayout = getBaseView().findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
         mSwipRefreshLayout.setColorSchemeColors(Color.parseColor("#FF0000"))
@@ -171,7 +166,7 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
 
         val retrofit: Retrofit = Retrofit.Builder()
                 .baseUrl(ContactCommon.douBanUrl)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                //.addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)
@@ -179,7 +174,7 @@ class IsPLayingMovieFragment:BaseFragment(), AbsListView.OnScrollListener {
         val service:ApiService = retrofit.create(ApiService::class.java)
         val observer = service.getIsPlayingMovie(start, count)
         observer.observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .subscribe(observerMovieBean)
     }
 

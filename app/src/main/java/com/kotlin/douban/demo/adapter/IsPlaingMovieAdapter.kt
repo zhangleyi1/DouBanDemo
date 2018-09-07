@@ -2,7 +2,6 @@ package com.kotlin.douban.demo.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +10,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.kotlin.douban.demo.R
-import com.kotlin.douban.demo.R.id.imageView
 import com.kotlin.douban.demo.Utils.LogUtils
 import com.kotlin.douban.demo.bean.Movie
-import org.w3c.dom.Text
 
 @Suppress("CAST_NEVER_SUCCEEDS")
 class IsPlayingMovieAdapter():BaseAdapter() {
@@ -52,11 +49,13 @@ class IsPlayingMovieAdapter():BaseAdapter() {
             view = p1
         }
 
-//        Glide.with(mContext).load(mList.get(p0).iconUrl).into(holder.iv)
+        if (p0 < mList.size) {
+            Glide.with(mContext).load(mList.get(p0).iconUrl).into(holder.iv)
+            holder.grade.text = mList.get(p0).grade.toString()
+            holder.name.text = mList.get(p0).name
+            holder.type.text = mList.get(p0).type
+        }
 
-        holder.grade.text = mList.get(p0).grade.toString()
-        holder.name.text = mList.get(p0).name
-        holder.type.text = mList.get(p0).type
         return view
     }
 

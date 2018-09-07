@@ -9,7 +9,7 @@ import com.kotlin.douban.demo.Utils.LogUtils
 
 abstract class BaseFragment: Fragment() {
 
-    lateinit var mView: View
+    private lateinit var mView: View
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
