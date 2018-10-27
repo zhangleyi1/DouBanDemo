@@ -22,3 +22,4 @@ class ExampleInstrumentedTest {
         assertEquals("com.kotlin.douban.demo", appContext.packageName)
     }
 }
+
